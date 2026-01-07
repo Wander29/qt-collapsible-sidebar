@@ -1,48 +1,71 @@
 /*
-    Elypson/qt-collapsible-section
+    Wander29/qt-collapsible-sidebar
+    (c) 2026 Ludovico Venturi - ludo.venturi@gmail.com
     (c) 2016 Michael A. Voelkel - michael.alexander.voelkel@gmail.com
 
-    This file is part of Elypson/qt-collapsible section.
+    This file is part of Wander29/qt-collapsible-sidebar.
 
-    Elypson/qt-collapsible-section is free software: you can redistribute it and/or modify
+    Wander29/qt-collapsible-sidebar is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    Elypson/qt-collapsible-section is distributed in the hope that it will be useful,
+    Wander29/qt-collapsible-sidebar is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with Elypson/qt-collapsible-section. If not, see <http://www.gnu.org/licenses/>.
-*/    
+    along with Wander29/qt-collapsible-sidebar. If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include "Section.h"
+#include "collapsible_sidebar.hpp"
 
-#include <QBoxLayout>
 #include <QLabel>
+#include <QTextEdit>
+#include <QVBoxLayout>
+#include <QWidget>
 #include <QPushButton>
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+  QMainWindow(parent),
+  m_textEdit(new QTextEdit(this))
 {
-    ui->setupUi(this);
+  // Central widget and layout
+  QWidget *central = new QWidget(this);
+  QHBoxLayout *layout = new QHBoxLayout(central);
 
-    Section* section = new Section("Section", 300, ui->centralWidget);
-    ui->centralWidget->layout()->addWidget(section);
+  // Configure text edit (read-only to behave like static text)
+  m_textEdit->setReadOnly(true);
+  m_textEdit->setPlainText(
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+    "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
+    "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. "
+    "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. "
+    "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+  );
 
-    auto* anyLayout = new QVBoxLayout();
-    anyLayout->addWidget(new QLabel("Some Text in Section", section));
-    anyLayout->addWidget(new QPushButton("Button in Section", section));
+  layout->addWidget(m_textEdit);
+  layout->setContentsMargins(6,6,6,6);
 
-    section->setContentLayout(*anyLayout);
+  setCentralWidget(central);
+  setWindowTitle(QStringLiteral("Collapsible Sidebar example"));
+
+  // Sidebar
+  ui::CollapsibleSidebar* sidebar = new ui::CollapsibleSidebar("Sidebar", 150);
+
+  auto* anyLayout = new QVBoxLayout();
+  anyLayout->addWidget(new QLabel("Some Text in Sidebar", sidebar));
+  anyLayout->addWidget(new QPushButton("Button in Sidebar", sidebar));
+
+  sidebar->setContentLayout(*anyLayout);
+  layout->addWidget(sidebar);
 }
 
-MainWindow::~MainWindow()
+QSize MainWindow::sizeHint() const
 {
-    delete ui;
+  return QSize(500, 450);
 }
+
+MainWindow::~MainWindow() = default;

@@ -17,16 +17,46 @@
 
     You should have received a copy of the GNU General Public License
     along with Wander29/qt-collapsible-sidebar. If not, see <http://www.gnu.org/licenses/>.
-*/    
+*/
 
-#include "mainwindow.h"
-#include <QApplication>
+#ifndef COLLAPSIBLE_SIDEBAR_HPP
+#define COLLAPSIBLE_SIDEBAR_HPP
 
-int main(int argc, char *argv[])
+#include <QFrame>
+#include <QGridLayout>
+#include <QParallelAnimationGroup>
+#include <QScrollArea>
+#include <QToolButton>
+#include <QWidget>
+
+namespace ui
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+class CollapsibleSidebar : public QWidget
+{
+  Q_OBJECT
 
-    return a.exec();
+public:
+  static const int DEFAULT_DURATION = 150;
+
+  explicit CollapsibleSidebar(const QString& title = "", const int animationDuration = DEFAULT_DURATION, QWidget* parent = 0);
+
+  void setContentLayout(QLayout& contentLayout);
+  void setTitle(QString title);
+  void updateWidths();
+
+public slots:
+  void toggle(bool collapsed);
+
+private:
+  QGridLayout* mainLayout;
+  QToolButton* toggleButton;
+  QParallelAnimationGroup* toggleAnimation;
+  QScrollArea* contentArea;
+  int animationDuration;
+  int collapsedWidth;
+  bool isExpanded = false;
+  static const int INITIAL_WIDTH=48;
+};
 }
+
+#endif // COLLAPSIBLE_SIDEBAR_HPP
